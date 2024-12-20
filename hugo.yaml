@@ -1,18 +1,26 @@
-baseurl: https://example.com/
+baseurl: https://IsUnderAchiever.github.io/
 languageCode: en-us
 theme: hugo-theme-stack
-title: Example Site
-copyright: Example Person
+title: 深海火锅店
+copyright: 深海火锅店
 
 # Theme i18n support
 # Available values: ar, bn, ca, de, el, en, es, fr, hu, id, it, ja, ko, nl, pt-br, th, uk, zh-cn, zh-hk, zh-tw
-DefaultContentLanguage: en
+# DefaultContentLanguage: en
+DefaultContentLanguage: zh-cn
 
 # Set hasCJKLanguage to true if DefaultContentLanguage is in [zh-cn ja ko]
 # This will make .Summary and .WordCount behave correctly for CJK languages.
-hasCJKLanguage: false
+hasCJKLanguage: true
 
 languages:
+    zh-cn:
+        languageName: 中文
+        title: 深海火锅店
+        weight: 2
+        params:
+            sidebar:
+                subtitle: 记录我的成长史
     en:
         languageName: English
         title: Example Site
@@ -20,21 +28,14 @@ languages:
         params:
             sidebar:
                 subtitle: Example description
-    zh-cn:
-        languageName: 中文
-        title: 演示站点
-        weight: 2
-        params:
-            sidebar:
-                subtitle: 演示说明
-    ar:
-        languageName: عربي
-        languagedirection: rtl
-        title: موقع تجريبي
-        weight: 3
-        params:
-            sidebar:
-                subtitle: وصف تجريبي
+    # ar:
+    #     languageName: عربي
+    #     languagedirection: rtl
+    #     title: موقع تجريبي
+    #     weight: 3
+    #     params:
+    #         sidebar:
+    #             subtitle: وصف تجريبي
 
 services:
     # Change it to your Disqus shortname before using
@@ -45,7 +46,7 @@ services:
         id:
 
 pagination:
-    pagerSize: 3
+    pagerSize: 30
 
 permalinks:
     post: /p/:slug/
@@ -63,12 +64,12 @@ params:
         customText:
 
     dateFormat:
-        published: Jan 02, 2006
+        published: 2006-01-02
         lastUpdated: Jan 02, 2006 15:04 MST
 
     sidebar:
         emoji: 🍥
-        subtitle: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        subtitle: 欢迎来到我的博客
         avatar:
             enabled: true
             local: true
