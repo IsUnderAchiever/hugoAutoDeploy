@@ -2,7 +2,7 @@
 title: Terminal
 description: Terminal配置
 date: 2022-12-27
-slug: Terminal
+slug: Terminal配置
 image: settings-default-shell.png
 categories:
     - 系统配置

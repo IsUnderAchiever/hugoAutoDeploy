@@ -2,7 +2,7 @@
 title: Hbuilder
 description: Hbuilder配置
 date: 2023-03-25
-slug: Hbuilder
+slug: Hbuilder配置
 image: 202412211333217.png
 categories:
     - 系统配置

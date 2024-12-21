@@ -2,7 +2,7 @@
 title: Clion
 description: Clion配置
 date: 2023-05-25
-slug: Clion
+slug: Clion配置
 image: clion_ide_overview.png
 categories:
     - 系统配置

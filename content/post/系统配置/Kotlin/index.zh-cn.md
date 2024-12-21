@@ -2,7 +2,7 @@
 title: Kotlin
 description: Kotlin配置
 date: 2024-10-05
-slug: Kotlin
+slug: Kotlin配置
 image: 202412211343389.png
 categories:
     - 系统配置

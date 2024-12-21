@@ -2,7 +2,7 @@
 title: Idea
 description: Idea配置
 date: 2023-01-19
-slug: Idea
+slug: Idea配置
 image: overview-heading-screenshot.webp
 categories:
     - 系统配置

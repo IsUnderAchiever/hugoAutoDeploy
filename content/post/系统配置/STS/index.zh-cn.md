@@ -2,7 +2,7 @@
 title: STS
 description: Spring Tools Suite安装及配置
 date: 2023-03-04
-slug: STS
+slug: STS配置
 image: 202412211431425.png
 categories:
     - 系统配置

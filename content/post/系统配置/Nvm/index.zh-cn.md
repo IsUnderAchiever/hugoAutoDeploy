@@ -2,7 +2,7 @@
 title: Nvm
 description: Nvm配置
 date: 2023-01-19
-slug: Nvm
+slug: Nvm配置
 image: 202412211357864.png
 categories:
     - 系统配置

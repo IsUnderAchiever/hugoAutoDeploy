@@ -2,7 +2,7 @@
 title: Golang
 description: Golang配置
 date: 2024-12-21
-slug: Golang
+slug: Golang配置
 image: 202412211329268.png
 categories:
     - 系统配置

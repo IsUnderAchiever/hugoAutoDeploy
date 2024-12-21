@@ -2,7 +2,7 @@
 title: MySQL
 description: MySQL配置
 date: 2023-02-18
-slug: MySQL
+slug: MySQL配置
 image: 202412211354776.png
 categories:
     - 系统配置

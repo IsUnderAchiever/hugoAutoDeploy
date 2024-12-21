@@ -2,7 +2,7 @@
 title: Maven
 description: Maven配置
 date: 2023-01-19
-slug: Maven
+slug: Maven配置
 image: maven-logo-black-on-white.png
 categories:
     - 系统配置

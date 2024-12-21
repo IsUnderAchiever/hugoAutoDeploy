@@ -2,7 +2,7 @@
 title: Java
 description: Java环境变量配置
 date: 2023-02-18
-slug: Java
+slug: Java环境变量配置
 image: 202412211340865.png
 categories:
     - 系统配置

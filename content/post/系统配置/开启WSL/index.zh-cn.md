@@ -2,7 +2,7 @@
 title: WSL
 description: 开启WSL
 date: 2024-06-02
-slug: WSL
+slug: 开启WSL
 image: 202412211452323.png
 categories:
     - 系统配置

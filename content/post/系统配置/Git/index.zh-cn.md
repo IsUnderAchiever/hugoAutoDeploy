@@ -2,7 +2,7 @@
 title: Git
 description: Git配置
 date: 2022-12-13
-slug: Git
+slug: Git配置
 image: branching-illustration@2x.png
 categories:
     - 系统配置

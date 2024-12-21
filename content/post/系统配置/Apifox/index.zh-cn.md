@@ -2,7 +2,7 @@
 title: Apifox
 description: Apifox使用
 date: 2023-05-25
-slug: Apifox
+slug: Apifox使用
 image: main-interface-dark.webp
 categories:
     - 系统配置

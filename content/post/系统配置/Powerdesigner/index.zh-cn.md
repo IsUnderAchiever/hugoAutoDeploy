@@ -2,7 +2,7 @@
 title: PowerDesigner
 description: PowerDesigner配置
 date: 2023-02-18
-slug: PowerDesigner
+slug: PowerDesigner配置
 image: 202412211427344.png
 categories:
     - 系统配置

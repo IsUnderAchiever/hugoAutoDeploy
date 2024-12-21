@@ -2,7 +2,7 @@
 title: Tomcat
 description: Tomcat配置
 date: 2023-03-04
-slug: Tomcat
+slug: Tomcat配置
 image: 202412211436947.png
 categories:
     - 系统配置

@@ -2,7 +2,7 @@
 title: Docker
 description: Docker配置
 date: 2022-12-14
-slug: Docker
+slug: Docker配置
 image: dbc-docker-desktop-home.webp
 categories:
     - 系统配置

@@ -15,6 +15,230 @@
         <guid>http://localhost:1313/categories/%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE/</guid>
         <description>&lt;img src="http://localhost:1313/categories/%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE/hutomo-abrianto-l2jk-uxb1BY-unsplash.jpg" alt="Featured image of post 系统配置" /&gt;</description>
         </item>
+        <item>
+        <title>Angular</title>
+        <link>http://localhost:1313/categories/angular/</link>
+        <pubDate>Sun, 08 Dec 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/angular/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Freemarker</title>
+        <link>http://localhost:1313/categories/freemarker/</link>
+        <pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/freemarker/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>NestJs</title>
+        <link>http://localhost:1313/categories/nestjs/</link>
+        <pubDate>Thu, 18 Jul 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/nestjs/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>React</title>
+        <link>http://localhost:1313/categories/react/</link>
+        <pubDate>Sun, 07 Jul 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/react/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Dubbo</title>
+        <link>http://localhost:1313/categories/dubbo/</link>
+        <pubDate>Sat, 01 Jun 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/dubbo/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Java</title>
+        <link>http://localhost:1313/categories/java/</link>
+        <pubDate>Sat, 01 Jun 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/java/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Vue</title>
+        <link>http://localhost:1313/categories/vue/</link>
+        <pubDate>Sat, 01 Jun 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/vue/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>多级缓存</title>
+        <link>http://localhost:1313/categories/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</link>
+        <pubDate>Sat, 01 Jun 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Redis</title>
+        <link>http://localhost:1313/categories/redis/</link>
+        <pubDate>Wed, 24 Apr 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/redis/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Docker</title>
+        <link>http://localhost:1313/categories/docker/</link>
+        <pubDate>Sun, 21 Apr 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/docker/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Seata</title>
+        <link>http://localhost:1313/categories/seata/</link>
+        <pubDate>Tue, 16 Apr 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/seata/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Resilience4j</title>
+        <link>http://localhost:1313/categories/resilience4j/</link>
+        <pubDate>Mon, 15 Apr 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/resilience4j/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Sentinel</title>
+        <link>http://localhost:1313/categories/sentinel/</link>
+        <pubDate>Wed, 10 Apr 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/sentinel/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Spring</title>
+        <link>http://localhost:1313/categories/spring/</link>
+        <pubDate>Wed, 10 Apr 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/spring/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>RabbitMq</title>
+        <link>http://localhost:1313/categories/rabbitmq/</link>
+        <pubDate>Wed, 03 Apr 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/rabbitmq/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Elasticsearch</title>
+        <link>http://localhost:1313/categories/elasticsearch/</link>
+        <pubDate>Mon, 01 Apr 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/elasticsearch/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Activiti</title>
+        <link>http://localhost:1313/categories/activiti/</link>
+        <pubDate>Fri, 01 Mar 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/activiti/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Mockito</title>
+        <link>http://localhost:1313/categories/mockito/</link>
+        <pubDate>Fri, 01 Mar 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/mockito/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Nginx</title>
+        <link>http://localhost:1313/categories/nginx/</link>
+        <pubDate>Fri, 01 Mar 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/nginx/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Junit</title>
+        <link>http://localhost:1313/categories/junit/</link>
+        <pubDate>Fri, 16 Feb 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/junit/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Flowable</title>
+        <link>http://localhost:1313/categories/flowable/</link>
+        <pubDate>Thu, 15 Feb 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/flowable/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Shell</title>
+        <link>http://localhost:1313/categories/shell/</link>
+        <pubDate>Thu, 15 Feb 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/shell/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>JavaScript</title>
+        <link>http://localhost:1313/categories/javascript/</link>
+        <pubDate>Wed, 19 Apr 2023 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/javascript/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>JQuery</title>
+        <link>http://localhost:1313/categories/jquery/</link>
+        <pubDate>Wed, 19 Apr 2023 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/jquery/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>CSS</title>
+        <link>http://localhost:1313/categories/css/</link>
+        <pubDate>Sun, 16 Apr 2023 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/css/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Hibernate</title>
+        <link>http://localhost:1313/categories/hibernate/</link>
+        <pubDate>Sun, 02 Apr 2023 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/hibernate/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>沙箱支付</title>
+        <link>http://localhost:1313/categories/%E6%B2%99%E7%AE%B1%E6%94%AF%E4%BB%98/</link>
+        <pubDate>Mon, 27 Mar 2023 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/%E6%B2%99%E7%AE%B1%E6%94%AF%E4%BB%98/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>MyBatis</title>
+        <link>http://localhost:1313/categories/mybatis/</link>
+        <pubDate>Sun, 19 Mar 2023 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/mybatis/</guid>
+        <description></description>
+        </item>
         
     </channel>
 </rss>

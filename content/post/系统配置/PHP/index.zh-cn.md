@@ -2,7 +2,7 @@
 title: PHP8
 description: PHP8配置
 date: 2024-10-05
-slug: PHP8
+slug: PHP8配置
 image: 202412211409504.png
 categories:
     - 系统配置

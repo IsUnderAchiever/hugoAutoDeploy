@@ -2,7 +2,7 @@
 title: Potplayer
 description: Potplayer配置
 date: 2022-12-27
-slug: Potplayer
+slug: Potplayer配置
 image: 202412211456063.png
 categories:
     - 系统配置

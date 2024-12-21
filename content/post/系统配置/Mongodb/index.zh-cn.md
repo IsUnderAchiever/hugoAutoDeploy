@@ -2,7 +2,7 @@
 title: Mongodb
 description: Mongodb配置
 date: 2024-10-20
-slug: Mongodb
+slug: Mongodb配置
 image: 202412211349060.png
 categories:
     - 系统配置
