@@ -176,7 +176,7 @@ params:
                   limit: 5
             - type: categories
               params:
-                  limit: 30
+                  limit: 40
             # - type: tag-cloud
             #   params:
             #       limit: 20
