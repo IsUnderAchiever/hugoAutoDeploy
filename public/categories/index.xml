@@ -7,13 +7,29 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>深海火锅店</copyright>
-        <lastBuildDate>Mon, 23 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 27 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>Docker</title>
         <link>http://localhost:1313/categories/docker/</link>
-        <pubDate>Mon, 23 Dec 2024 00:00:00 +0000</pubDate>
+        <pubDate>Fri, 27 Dec 2024 00:00:00 +0000</pubDate>
         
         <guid>http://localhost:1313/categories/docker/</guid>
         <description>&lt;img src="http://localhost:1313/categories/docker/f2b07e26a6ee411db.webp" alt="Featured image of post Docker" /&gt;</description>
+        </item>
+        <item>
+        <title>Kubernetes</title>
+        <link>http://localhost:1313/categories/kubernetes/</link>
+        <pubDate>Tue, 24 Dec 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/kubernetes/</guid>
+        <description>&lt;img src="http://localhost:1313/categories/kubernetes/ef1b5497b405e49106c.jpg" alt="Featured image of post Kubernetes" /&gt;</description>
+        </item>
+        <item>
+        <title>Minio</title>
+        <link>http://localhost:1313/categories/minio/</link>
+        <pubDate>Tue, 24 Dec 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/minio/</guid>
+        <description>&lt;img src="http://localhost:1313/categories/minio/20200215021341_bljsp.jpg" alt="Featured image of post Minio" /&gt;</description>
         </item>
         <item>
         <title>系统配置</title>

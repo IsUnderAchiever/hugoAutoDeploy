@@ -3,7 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/</loc>
-    <lastmod>2024-12-23T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-27T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -16,7 +16,7 @@
                 />
   </url><url>
     <loc>http://localhost:1313/categories/</loc>
-    <lastmod>2024-12-23T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-27T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -29,7 +29,25 @@
                 />
   </url><url>
     <loc>http://localhost:1313/categories/docker/</loc>
-    <lastmod>2024-12-23T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-27T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/p/docker%E6%90%AD%E5%BB%BA%E7%A7%81%E4%BA%BAdocker%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93/</loc>
+    <lastmod>2024-12-27T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/post/</loc>
+    <lastmod>2024-12-27T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/categories/kubernetes/</loc>
+    <lastmod>2024-12-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/p/kubernetes/</loc>
+    <lastmod>2024-12-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/categories/minio/</loc>
+    <lastmod>2024-12-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/p/minio/</loc>
+    <lastmod>2024-12-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/p/docker%E9%83%A8%E7%BD%B2gitlab/</loc>
     <lastmod>2024-12-23T00:00:00+00:00</lastmod>
@@ -41,9 +59,6 @@
     <lastmod>2024-12-23T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/p/docker%E9%83%A8%E7%BD%B2portainer/</loc>
-    <lastmod>2024-12-23T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/post/</loc>
     <lastmod>2024-12-23T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/p/%E5%8D%9A%E5%AE%A2%E9%85%8D%E7%BD%AE/</loc>
