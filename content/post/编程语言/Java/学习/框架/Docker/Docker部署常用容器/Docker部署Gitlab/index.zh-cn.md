@@ -96,3 +96,21 @@ user.save!
 # 退出
 exit
 ```
+
+## Gitlab-Runner
+
+```sh
+# 创建容器
+docker run -d \
+--name gitlab-runner \
+--restart always \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v /srv/gitlab-runner/config:/etc/gitlab-runner \
+gitlab/gitlab-runner:latest
+
+# 初始化注册，此时需要输入url等信息，这些信息获取步骤如下图所示
+docker exec -it gitlab-runner gitlab-runner register
+```
+
+![image-20241227164149717](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo03/202412281325707.png)
+
