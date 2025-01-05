@@ -115,7 +115,7 @@ ll data/docker/registry/v2/repositories/
 
 > 这里使用`registry-ui`配置可视化界面进行管理
 
-新建`docker-componse.yml`文件，并上传到服务器`/root/registry`目录下
+新建`docker-compose.yml`文件，并上传到服务器`/root/registry`目录下
 
 ```yaml
 version: '3.8'

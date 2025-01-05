@@ -2983,6 +2983,9 @@ kind: DaemonSet
 metadata:
   name: fluentd
 spec:
+  selector: # 匹配po
+    matchLabels:
+      app: logging
   template:
     metadata:
       labels:
@@ -3010,32 +3013,146 @@ spec:
            name: varlog
 ```
 
-
-
-##### 指定 Node 节点
-
-DaemonSet 会忽略 Node 的 unschedulable 状态，有两种方式来指定 Pod 只运行在指定的 Node 节点上：
-
-- nodeSelector：只调度到匹配指定 label 的 Node 上
-- nodeAffinity：功能更丰富的 Node 选择器，比如支持集合操作
-- podAffinity：调度到满足条件的 Pod 所在的 Node 上
-
-> nodeSelector
-
-先为 Node 打上标签
-
 ```sh
-kubectl label nodes k8s-node1 svc_type=microsvc
+# 查看daemonset
+[root@k8s-master daemonset]# kubectl get ds
+NAME      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+fluentd   2         2         0       2            0           <none>          8s
+# 查看对应的po
+[root@k8s-master k8s]# kubectl get po --show-labels
+NAME            READY   STATUS    RESTARTS   AGE   LABELS
+dns-test        1/1     Running   0          12d   run=dns-test
+fluentd-drcr8   1/1     Running   0          13m   app=logging,controller-revision-hash=b96747bc7,id=fluentd,pod-template-generation=1
+fluentd-ndlcf   1/1     Running   0          13m   app=logging,controller-revision-hash=b96747bc7,id=fluentd,pod-template-generation=1
+web-0           1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-0
+web-1           1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-1
+web-2           1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-2
+web-3           1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-3
+web-4           1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-4
+web-5           1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-5
+# 查看标签，因为没有选择需要部署的节点，所以现在往每一个非master节点都部署了一份
+[root@k8s-master k8s]# kubectl get nodes --show-labels
+NAME         STATUS   ROLES                  AGE   VERSION   LABELS
+k8s-master   Ready    control-plane,master   82d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-master,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node-role.kubernetes.io/master=,node.kubernetes.io/exclude-from-external-load-balancers=
+k8s-node1    Ready    <none>                 82d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node1,kubernetes.io/os=linux
+k8s-node2    Ready    <none>                 82d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node2,kubernetes.io/os=linux
+# 重新编辑daemonset
+[root@k8s-master k8s]# kubectl edit ds fluentd
+daemonset.apps/fluentd edited
 ```
 
-然后再 daemonset 配置中设置 nodeSelector
-
 ```yaml
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  annotations:
+    deprecated.daemonset.template.generation: "2"
+  creationTimestamp: "2024-12-30T13:34:32Z"
+  generation: 2
+  name: fluentd
+  namespace: default
+  resourceVersion: "205641"
+  uid: 022c628c-ca36-4c97-b149-f201569ed32e
 spec:
- template:
-  spec:
-   nodeSelector:
-    svc_type: microsvc
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: logging
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: logging
+        id: fluentd
+      name: fluentd
+    spec:
+      containers:
+      - env:
+        - name: FLUENTD_ARGS
+          value: -qq
+        image: agilestacks/fluentd-elasticsearch:v1.3.0
+        imagePullPolicy: IfNotPresent
+        name: fluentd-es
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/docker/containers
+          name: containers
+        - mountPath: /varlog
+          name: varlog
+      dnsPolicy: ClusterFirst
+      nodeSelector: ## 添加这两行，用来选择对应label的nodes节点
+        type: microservices
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - hostPath:
+          path: /var/lib/docker/containers
+          type: ""
+...
+```
+
+```sh
+# 我们这边nodes节点没有匹配`type: microservices`的，所以下面没有daemonset
+[root@k8s-master k8s]# kubectl get nodes --show-labels
+NAME         STATUS   ROLES                  AGE   VERSION   LABELS
+k8s-master   Ready    control-plane,master   83d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-master,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node-role.kubernetes.io/master=,node.kubernetes.io/exclude-from-external-load-balancers=
+k8s-node1    Ready    <none>                 83d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node1,kubernetes.io/os=linux
+k8s-node2    Ready    <none>                 82d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node2,kubernetes.io/os=linux
+[root@k8s-master k8s]# kubectl get po --show-labels
+NAME       READY   STATUS    RESTARTS   AGE   LABELS
+dns-test   1/1     Running   0          12d   run=dns-test
+web-0      1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-0
+web-1      1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-1
+web-2      1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-2
+web-3      1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-3
+web-4      1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-4
+web-5      1/1     Running   0          11d   app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-5
+# 给nodes节点增加label
+[root@k8s-master k8s]# kubectl label nodes k8s-node1 type=microservices
+node/k8s-node1 labeled
+[root@k8s-master k8s]# kubectl get nodes --show-labels
+NAME         STATUS   ROLES                  AGE   VERSION   LABELS
+k8s-master   Ready    control-plane,master   83d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-master,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node-role.kubernetes.io/master=,node.kubernetes.io/exclude-from-external-load-balancers=
+k8s-node1    Ready    <none>                 83d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node1,kubernetes.io/os=linux,type=microservices
+k8s-node2    Ready    <none>                 83d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node2,kubernetes.io/os=linux
+# 这个时候就自动增加了一个ds
+[root@k8s-master k8s]# kubectl get ds
+NAME      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR        AGE
+fluentd   1         1         1       1            1           type=microservices   21m
+# 查看发现果然`fluentd-7rxmk`被部署到k8s-node1上了
+[root@k8s-master k8s]# kubectl get po --show-labels -o wide
+NAME            READY   STATUS    RESTARTS   AGE   IP               NODE        NOMINATED NODE   READINESS GATES   LABELS
+dns-test        1/1     Running   0          12d   10.244.169.129   k8s-node2   <none>           <none>            run=dns-test
+fluentd-7rxmk   1/1     Running   0          73s   10.244.36.67     k8s-node1   <none>           <none>            app=logging,controller-revision-hash=5b4769fc56,id=fluentd,pod-template-generation=2
+web-0           1/1     Running   0          11d   10.244.36.71     k8s-node1   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-0
+web-1           1/1     Running   0          11d   10.244.169.136   k8s-node2   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-1
+web-2           1/1     Running   0          11d   10.244.169.135   k8s-node2   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-2
+web-3           1/1     Running   0          11d   10.244.36.70     k8s-node1   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-3
+web-4           1/1     Running   0          11d   10.244.36.69     k8s-node1   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-4
+web-5           1/1     Running   0          11d   10.244.169.134   k8s-node2   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-5
+# 再给k8s-node2加一个标签
+[root@k8s-master k8s]# kubectl label no k8s-node2 type=microservices
+node/k8s-node2 labeled
+# 这边也自动部署了第二个fluentd(fluentd-zjrqp)
+[root@k8s-master k8s]# kubectl get po --show-labels -o wide
+NAME            READY   STATUS    RESTARTS   AGE     IP               NODE        NOMINATED NODE   READINESS GATES   LABELS
+dns-test        1/1     Running   0          12d     10.244.169.129   k8s-node2   <none>           <none>            run=dns-test
+fluentd-7rxmk   1/1     Running   0          2m53s   10.244.36.67     k8s-node1   <none>           <none>            app=logging,controller-revision-hash=5b4769fc56,id=fluentd,pod-template-generation=2
+fluentd-zjrqp   1/1     Running   0          3s      10.244.169.131   k8s-node2   <none>           <none>            app=logging,controller-revision-hash=5b4769fc56,id=fluentd,pod-template-generation=2
+web-0           1/1     Running   0          11d     10.244.36.71     k8s-node1   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-0
+web-1           1/1     Running   0          11d     10.244.169.136   k8s-node2   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-1
+web-2           1/1     Running   0          11d     10.244.169.135   k8s-node2   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-2
+web-3           1/1     Running   0          11d     10.244.36.70     k8s-node1   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-3
+web-4           1/1     Running   0          11d     10.244.36.69     k8s-node1   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-4
+web-5           1/1     Running   0          11d     10.244.169.134   k8s-node2   <none>           <none>            app=nginx,controller-revision-hash=web-7974cc466,statefulset.kubernetes.io/pod-name=web-5
 ```
 
 > nodeAffinity
@@ -3116,15 +3233,36 @@ spec:
 
 ##### 滚动更新
 
-不建议使用 RollingUpdate，建议使用 OnDelete 模式，这样避免频繁更新 ds
+> 不建议使用 RollingUpdate，建议使用 OnDelete 模式，这样避免频繁更新 ds
+>
+> 默认daemonset滚动更新的模式是`RollingUpdate`
+>
+> 但是不建议使用`RollingUpdate`，建议使用`Ondelete`
+>
+> 因为如果我们希望对某个节点的ds进行更新，那么此时会将所有结点的ds全部更新
+>
+> 如果使用`Ondelete`，我们只需要将需要更新的`po`删掉即可，会自动创建并更新
+
+
 
 #### HPA 自动扩/缩容
 
 通过观察 pod 的 cpu、内存使用率或自定义 metrics 指标进行自动的扩容或缩容 pod 的数量。
 
-通常用于 Deployment，不适用于无法扩/缩容的对象，如 DaemonSet
+通常用于 Deployment，不适用于无法扩/缩容的对象，如 `DaemonSet`
 
 控制管理器每隔30s（可以通过–horizontal-pod-autoscaler-sync-period修改）查询metrics的资源使用情况
+
+> 这里演示就先将副本数改成1，让他自动扩容
+
+```sh
+[root@k8s-master deployments]# ll
+total 4
+-rw-r--r-- 1 root root 569 Dec 15 21:52 nginx-deploy.yaml
+[root@k8s-master deployments]# vim nginx-deploy.yaml
+# spec:
+#   replicas: 1 # 副本数
+```
 
 ##### 开启指标服务
 
@@ -3146,11 +3284,56 @@ kubectl get pods --all-namespaces | grep metrics
 
 ##### cpu、内存指标监控
 
-实现 cpu 或内存的监控，首先有个前提条件是该对象必须配置了 resources.requests.cpu 或 resources.requests.memory 才可以，可以配置当 cpu/memory 达到上述配置的百分比后进行扩容或缩容
+实现 cpu 或内存的监控，首先有个前提条件是该对象必须配置了 `resources.requests.cpu` 或 `resources.requests.memory` 才可以，可以配置当 cpu/memory 达到上述配置的百分比后进行扩容或缩容
 
 创建一个 HPA：
 
 1. 先准备一个好一个有做资源限制的 deployment
+
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     labels:
+       app: nginx-deploy
+     name: nginx-deploy
+     namespace: default
+   spec:
+     replicas: 1
+     revisionHistoryLimit: 10
+     selector:
+       matchLabels:
+         app: nginx-deploy
+     strategy:
+       rollingUpdate:
+         maxSurge: 25%
+         maxUnavailable: 25%
+       type: RollingUpdate
+     template:
+       metadata:
+         labels:
+           app: nginx-deploy
+       spec:
+         containers:
+         - image: nginx:1.7.9
+           imagePullPolicy: IfNotPresent
+           name: nginx
+           resources: # 配置资源限制，配小一点，便于测试自动扩容
+             limits:
+               cpu: 100m
+               memory: 128Mi
+             requests:
+               cpu: 100m
+               memory: 128Mi
+         restartPolicy: Always
+         terminationGracePeriodSeconds: 30
+   ```
+
+   我们之前已经创建过一个`nginx-deploy`了，这次直接替换就好
+
+   ```sh
+   kubectl replace -f nginx-deploy.yaml
+   ```
 
 2. 执行命令 
 
