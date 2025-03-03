@@ -7,10 +7,18 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>深海火锅店</copyright>
-        <lastBuildDate>Fri, 27 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 03 Mar 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>React</title>
+        <link>http://localhost:1313/categories/react/</link>
+        <pubDate>Mon, 03 Mar 2025 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/categories/react/</guid>
+        <description>&lt;img src="http://localhost:1313/categories/react/e18e84b29ccc6fb230d2.webp" alt="Featured image of post React" /&gt;</description>
+        </item>
+        <item>
         <title>Docker</title>
         <link>http://localhost:1313/categories/docker/</link>
-        <pubDate>Fri, 27 Dec 2024 00:00:00 +0000</pubDate>
+        <pubDate>Sat, 04 Jan 2025 00:00:00 +0000</pubDate>
         
         <guid>http://localhost:1313/categories/docker/</guid>
         <description>&lt;img src="http://localhost:1313/categories/docker/f2b07e26a6ee411db.webp" alt="Featured image of post Docker" /&gt;</description>
@@ -78,14 +86,6 @@
         
         <guid>http://localhost:1313/categories/nestjs/</guid>
         <description>&lt;img src="http://localhost:1313/categories/nestjs/20230101090436_95417.thumb.300_0.jpg" alt="Featured image of post NestJs" /&gt;</description>
-        </item>
-        <item>
-        <title>React</title>
-        <link>http://localhost:1313/categories/react/</link>
-        <pubDate>Sun, 07 Jul 2024 00:00:00 +0000</pubDate>
-        
-        <guid>http://localhost:1313/categories/react/</guid>
-        <description>&lt;img src="http://localhost:1313/categories/react/e18e84b29ccc6fb230d2.webp" alt="Featured image of post React" /&gt;</description>
         </item>
         <item>
         <title>Dubbo</title>
