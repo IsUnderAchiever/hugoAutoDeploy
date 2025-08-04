@@ -6,5 +6,5 @@
 hugo new content post/myFirstBlog/index.zh-cn.md
 
 # 运行项目
-hugo serve -D
+./hugo serve -D
 ```

@@ -24,12 +24,11 @@ categories:
 >
 >   `需要注意的是`，如果在创建文档时指定的索引不存在，Elasticsearch 会自动创建该索引，并使用默认的 mapping。因此，为了确保索引中的字段和数据类型符合预期，最好在创建索引之前先定义好 mapping。
 ![image-20230525145544098](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo01/202307132141026.png)
-<img src="https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo01/202307132141404.png" alt="image-20230525150351576" style="zoom:80%;" />
-> ### 酒店定义如下，但是`注意一个问题`
->
-> name、brand、business等字段都要参与搜索，也就是说用户输入的关键词可能是多个关键字（查询条件不是一个值，而是多个值）
->
-> 可以使用`copy_to`属性，将当前字段拷贝到指定字段
+### 酒店定义如下，但是`注意一个问题`
+> 
+>name、brand、business等字段都要参与搜索，也就是说用户输入的关键词可能是多个关键字（查询条件不是一个值，而是多个值）
+> 
+>可以使用`copy_to`属性，将当前字段拷贝到指定字段
 ```sql
 # 酒店的mapping映射（不完美）
 PUT /hotel

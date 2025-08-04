@@ -1,11 +1,11 @@
 ---
 title: Kubernetes_2
 description: Kubernetes_2
-date: 2025-04-30
+date: 2025-06-11
 slug: Kubernetes_2
 image: 202412242125601.png
 categories:
-  - Kubernetes_2
+  - Kubernetes
 ---
 
 # Kubernetes_2
@@ -42,6 +42,8 @@ spec:
     NodePort # 随机启动一个端口（30000~32767），映射到 ports 中的端口，该端口是直接绑定在 node 上的，且集群中的每一个 node 都会绑定这个端口
     # 也可以用于将服务暴露给外部访问，但是这种方式实际生产环境不推荐，效率较低，而且 Service 是四层负载
 ```
+
+新建一个`nginx-deploy.yaml`文件
 
 ```YAML
 apiVersion: apps/v1 # deployment api 版本
@@ -415,6 +417,11 @@ root@k8s-master:/opt/k8s/helm# cp helm /usr/local/bin/
 # 查看版本
 root@k8s-master:/opt/k8s/helm# helm version
 version.BuildInfo{Version:"v3.2.3", GitCommit:"8f832046e258e2cb800894579b1b3b50c2d83492", GitTreeState:"clean", GoVersion:"go1.13.12"}
+```
+
+#### 使用helm安装ingress-nginx
+
+```sh
 # 添加仓库
 root@k8s-master:/opt/k8s/helm# helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 "ingress-nginx" has been added to your repositories
@@ -434,6 +441,11 @@ root@k8s-master:/opt/k8s/helm# tar -zxvf ingress-nginx-4.12.1.tgz
 # 将仓库信息改为国内镜像
 root@k8s-master:/opt/k8s/helm/ingress-nginx# vim values.yaml
 
+# 首先不建议自己手动配置，如果要手动配置，ingress-nginx的版本请选择4.4.2的，当前下载的是4.12.1，往下配置会遇到一些问题
+# 下面放了配置文件的下载链接，可以直接下载，跳过配置内容
+# 以下配置是基于4.4.2的ingress-nginx
+# 下载4.4.2的ingress-nginx
+helm pull ingress-nginx/ingress-nginx --version 4.4.2
 ```
 
 ```yaml
@@ -505,6 +517,8 @@ controller:
     ingress: "true"
 ```
 
+### ingress基本使用
+
 ```shell
 # 标记一下node
 root@k8s-master:/opt/k8s/helm/ingress-nginx# k label no k8s-master ingress=true
@@ -513,7 +527,508 @@ node/k8s-master labeled
 root@k8s-master:/opt/k8s/helm/ingress-nginx# k get no --show-labels
 NAME         STATUS   ROLES                  AGE   VERSION   LABELS
 k8s-master   Ready    control-plane,master   24d   v1.23.6   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,ingress=true,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-master,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node-role.kubernetes.io/master=,node.kubernetes.io/exclude-from-external-load-balancers=
+# 创建命名空间
 root@k8s-master:/opt/k8s/helm/ingress-nginx# k create ns ingress-nginx
 namespace/ingress-nginx created
+# 安装ingress-nginx
 helm install ingress-nginx -n ingress-nginx .
+
+# 若报错，可以先尝试彻底删除 Helm 创建的所有资源，然后重新创建
+helm delete ingress-nginx -n ingress-nginx
+
+##=======================================
+# 这里更换下版本，4.12.3一直报错MountVolume.SetUp failed for volume "kube-api-access-8ggcc" : object "ingress-nginx"/"kube-root-ca.crt" not registered，我难以定位到问题
+# 拉取指定版本的 Helm Chart 包
+helm pull ingress-nginx/ingress-nginx --version 4.4.2
+# 然后直接拿配置文件粘贴进去即可,链接如下。或者去找叩丁狼的k8s视频资料，这里我是参照他们的配置
+# 尚硅谷这里k8s的配置方法是使用yaml而非helm，看个人需要
 ```
+
+[values.yaml](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo05/202506111809272.yaml)
+
+上面已经创建了`nginx-svc`和`nginx-deploy`
+
+请确认你是否已经创建
+
+```shell
+kubectl get deploy -A
+# NAMESPACE   NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+# default     nginx-deploy   1/1     1            1           108s
+
+kubectl get svc
+# NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+# kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP        4d17h
+# nginx-svc    NodePort    10.97.90.141   <none>        80:32000/TCP   6s
+```
+
+新建`ingress.yaml`
+
+> 如果这里的`pathType`使用精确匹配和前缀匹配混用，那么会优先匹配精确匹配，没有匹配上才会使用前缀匹配
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress # 资源类型为 Ingress
+metadata:
+  name: wolfcode-nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules: # ingress 规则配置，可以配置多个
+  - host: k8s.wolfcode.cn # 域名配置，可以使用通配符 *
+    http:
+      paths: # 相当于 nginx 的 location 配置，可以配置多个
+      - pathType: Prefix # 路径类型，按照路径类型进行匹配 ImplementationSpecific 需要指定 IngressClass，具体匹配规则以 IngressClass 中的规则为准。Exact：精确匹配，URL需要与path完全匹配上，且区分大小写的。Prefix：以 / 作为分隔符来进行前缀匹配
+        backend:
+          service: 
+            name: nginx-svc # 代理到哪个 service
+            port: 
+              number: 80 # service 的端口
+        path: /api # 等价于 nginx 中的 location 的路径前缀匹配
+```
+
+```sh
+kubectl create -f ingress.yaml 
+# ingress.networking.k8s.io/wolfcode-nginx-ingress created
+
+kubectl get ingress
+# NAME                     CLASS    HOSTS             ADDRESS          PORTS   AGE
+# wolfcode-nginx-ingress   <none>   k8s.wolfcode.cn   10.107.132.102   80      108s
+
+kubectl get no -o wide
+# NAME     STATUS   ROLES                  AGE     VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION     CONTAINER-RUNTIME
+# tongwh   Ready    control-plane,master   4d17h   v1.23.6   116.148.120.214      <none>        Ubuntu 22.04.5 LTS   6.8.0-60-generic   docker://20.10.7
+
+kubectl get svc -A
+# NAMESPACE       NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                  AGE
+# default         kubernetes                 ClusterIP   10.96.0.1        <none>        443/TCP                  4d18h
+# default         nginx-svc                  NodePort    10.97.90.141     <none>        80:32000/TCP             30m
+# ingress-nginx   ingress-nginx-controller   ClusterIP   10.107.132.102   <none>        80/TCP,443/TCP           47m
+# kube-system     kube-dns                   ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP   4d18h
+
+# 这里把ingress-nginx的svc改成NodePort类型，将端口暴露出去外界才能访问到
+
+# 编辑 Ingress 控制器的 Service
+# 截图在下面，文件的第48行，将type改为`NodePort`
+kubectl edit svc ingress-nginx-controller -n ingress-nginx
+
+kubectl get svc -A
+# NAMESPACE       NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+# default         kubernetes                 ClusterIP   10.96.0.1        <none>        443/TCP                      4d18h
+# default         nginx-svc                  NodePort    10.97.90.141     <none>        80:32000/TCP                 34m
+# ingress-nginx   ingress-nginx-controller   NodePort    10.107.132.102   <none>        80:31982/TCP,443:30108/TCP   51m
+# kube-system     kube-dns                   ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP       4d18h
+```
+
+>配置一下hosts文件，让指定域名指向k8s主节点，我这里是`116.148.120.214`
+
+
+
+![image-20250611183347556](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo05/202506111959307.png)
+
+![image-20250611185819088](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo05/202506111959890.png)
+
+访问`http://k8s.wolfcode.cn:31982/`响应404，这是正常的，因为我们配置了前缀`/api`
+
+![image-20250611200054736](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo05/202506112001136.png)
+
+访问`http://k8s.wolfcode.cn:31982/api`响应结果如下
+
+![image-20250611200123743](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo05/202506112001892.png)
+
+```sh
+# 如果你的结果还是404，查看打印的日志,是否正确
+# 如果请求到对应pod的路径是/html/api说明请求路径没有重写，需要将/api重写
+# 需要在ingress.yaml里添加如下配置，上面的配置文件已经写过了，可以查看
+# nginx.ingress.kubernetes.io/rewrite-target: /
+
+kubectl get pod -A
+# NAMESPACE       NAME                             READY   STATUS    RESTARTS      AGE
+# default         dns-test                         1/1     Running   77 (4s ago)   3d4h
+# default         nginx-deploy-56696fbb5-5zs4d     1/1     Running   0             100m
+# ingress-nginx   ingress-nginx-controller-rlg4t   1/1     Running   0             116m
+# kube-flannel    kube-flannel-ds-74n5v            1/1     Running   2             4d19h
+# kube-system     etcd-tongwh                      1/1     Running   17            4d19h
+# kube-system     kube-apiserver-tongwh            1/1     Running   19            4d19h
+# kube-system     kube-controller-manager-tongwh   1/1     Running   7             4d19h
+# kube-system     kube-proxy-k4lrx                 1/1     Running   2             4d19h
+# kube-system     kube-scheduler-tongwh            1/1     Running   7             4d19h
+
+kubectl logs -f nginx-deploy-56696fbb5-5zs4d
+# 10.244.0.1 - - [11/Jun/2025:11:04:20 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.81.0" "116.148.120.214"
+# 10.244.0.1 - - [11/Jun/2025:11:05:26 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.81.0" "116.148.120.214"
+# 10.244.0.1 - - [11/Jun/2025:11:05:39 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/8.7.1" "10.0.0.2"
+# 10.244.0.1 - - [11/Jun/2025:11:51:10 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.81.0" "116.148.120.214"
+# 10.244.0.1 - - [11/Jun/2025:11:51:27 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/8.7.1" "10.0.0.2"
+# 10.244.0.1 - - [11/Jun/2025:11:51:36 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/8.7.1" "10.0.0.2"
+# 10.244.0.1 - - [11/Jun/2025:11:52:07 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/8.7.1" "10.0.0.2"
+# 10.244.0.1 - - [11/Jun/2025:11:56:44 +0000] "GET / HTTP/1.1" 200 612 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" "10.0.0.2"
+# 10.244.0.1 - - [11/Jun/2025:12:00:09 +0000] "GET / HTTP/1.1" 200 612 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" "10.0.0.2"
+# 10.244.0.1 - - [11/Jun/2025:12:01:00 +0000] "GET / HTTP/1.1" 200 612 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" "10.0.0.2"
+# 10.244.0.1 - - [11/Jun/2025:12:03:31 +0000] "GET / HTTP/1.1" 200 612 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" "10.0.0.2"
+# 10.244.0.1 - - [11/Jun/2025:12:03:35 +0000] "GET / HTTP/1.1" 200 612 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" "10.0.0.2"
+```
+
+`ingress.yaml`里也支持正则写路径，并非一定要写`/api`，比如`^/api`
+
+### 多域名配置
+
+ingress.yaml内容如下
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress # 资源类型为 Ingress
+metadata:
+  name: wolfcode-nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules: # ingress 规则配置，可以配置多个
+  - host: k8s.wolfcode.cn # 域名配置，可以使用通配符 *
+    http:
+      paths: # 相当于 nginx 的 location 配置，可以配置多个
+      - pathType: Prefix # 路径类型，按照路径类型进行匹配 ImplementationSpecific 需要指定 IngressClass，具体匹配规则以 IngressClass 中的规则为准。Exact：精确匹配，URL需要与path完全匹配上，且区分大小写的。Prefix：以 / 作为分隔符来进行前缀匹配
+        backend:
+          service: 
+            name: nginx-svc # 代理到哪个 service
+            port: 
+              number: 80 # service 的端口
+        path: /api # 等价于 nginx 中的 location 的路径前缀匹配
+      - pathType: Exec # 路径类型，按照路径类型进行匹配 ImplementationSpecific 需要指定 IngressClass，具体匹配规则以 IngressClass 中的规则为准。Exact：精确匹配>，URL需要与path完全匹配上，且区分大小写的。Prefix：以 / 作为分隔符来进行前缀匹配
+        backend:
+          service:
+            name: nginx-svc # 代理到哪个 service
+            port:
+              number: 80 # service 的端口
+        path: /
+  - host: api.wolfcode.cn # 域名配置，可以使用通配符 *
+    http:
+      paths: # 相当于 nginx 的 location 配置，可以配置多个
+      - pathType: Prefix # 路径类型，按照路径类型进行匹配 ImplementationSpecific 需要指定 IngressClass，具体匹配规则以 IngressClass 中的规则为准。Exact：精确匹配>，URL需要与path完全匹配上，且区分大小写的。Prefix：以 / 作为分隔符来进行前缀匹配
+        backend:
+          service:
+            name: nginx-svc # 代理到哪个 service
+            port:
+              number: 80 # service 的端口
+        path: /
+```
+
+其实就是spec下rules配置了多个hosts，当然也可以配置pathType实现多路径匹配
+
+## 配置与存储
+
+### ConfigMap
+
+一般用于去存储 Pod 中应用所需的一些配置信息，或者环境变量，将配置于 Pod 分开，避免应为修改配置导致还需要重新构建 镜像与容器。
+
+>configmap和docker里volume的区别
+
+| **特性**         | **ConfigMap（Kubernetes）**                              | **Docker Volume**                                    |
+| ---------------- | -------------------------------------------------------- | ---------------------------------------------------- |
+| **用途**         | 存储**非敏感**的配置数据（如配置文件、环境变量）。       | 存储任意类型的数据（如持久化数据、日志、共享文件）。 |
+| **生命周期管理** | 由 Kubernetes 管理，与 Pod 生命周期解耦。                | 通常由 Docker 或存储驱动管理，需手动清理。           |
+| **数据来源**     | 通过 API 创建，支持从字面量、文件或目录生成。            | 由容器运行时创建，数据可来自宿主机或匿名卷。         |
+| **动态更新**     | 支持热更新（修改 ConfigMap 后，挂载的 Pod 会自动更新）。 | 不支持动态更新（需重新挂载或重启容器）。             |
+| **安全性**       | 不适合存储敏感信息（如密码）。                           | 无特殊安全限制，但需自行管理敏感数据。               |
+| **集成能力**     | 与 Kubernetes 深度集成（如通过环境变量或 Volume 挂载）。 | 仅与 Docker 容器生命周期绑定。                       |
+
+#### 创建
+
+```sh
+# 查看下帮助命令，有一些example可以参考
+kubectl create configmap -h
+
+# 也可以缩写成cm
+kubectl create cm -h
+
+# Examples:
+#   # Create a new config map named my-config based on folder bar
+#   # 将指定目录下所有的文件添加到configmap(my-config)中
+#   kubectl create configmap my-config --from-file=path/to/bar
+#   
+#   # Create a new config map named my-config with specified keys instead of file basenames on disk
+#   kubectl create configmap my-config --from-file=key1=/path/to/bar/file1.txt --from-file=key2=/path/to/bar/file2.txt
+#   
+#   # Create a new config map named my-config with key1=config1 and key2=config2
+#   kubectl create configmap my-config --from-literal=key1=config1 --from-literal=key2=config2
+#   
+#   # Create a new config map named my-config from the key=value pairs in the file
+#   kubectl create configmap my-config --from-file=path/to/bar
+#   
+#   # Create a new config map named my-config from an env file
+#   kubectl create configmap my-config --from-env-file=path/to/foo.env --from-env-file=path/to/bar.env
+
+# 接下来创建一个test目录并指定test目录创建对应的configmap
+ll test/
+# 总计 16
+# drwxr-xr-x 2 root root 4096  6月 11 21:42 ./
+# drwxr-xr-x 3 root root 4096  6月 11 21:42 ../
+# -rw-r--r-- 1 root root   30  6月 11 21:40 db.properties
+# -rw-r--r-- 1 root root   27  6月 11 21:42 redis.properties
+
+kubectl create cm test-dir-config --from-file=test/
+# configmap/test-dir-config created
+
+kubectl get cm
+# NAME               DATA   AGE
+# kube-root-ca.crt   1      4d21h
+# test-dir-config    2      7s
+
+kubectl describe cm test-dir-config
+# Name:         test-dir-config
+# Namespace:    default
+# Labels:       <none>
+# Annotations:  <none>
+# 
+# Data
+# ====
+# db.properties:
+# ----
+# username=root
+# password=123456
+# 
+# redis.properties:
+# ----
+# host: localhost
+# port: 6379
+# 
+# 
+# BinaryData
+# ====
+# 
+# Events:  <none>
+
+# 基于文件的形式，而非文件夹
+# 这里spring_conf可以给指定文件取一个名字，类似于重命名的效果，在kubectl describe cm {config_name} 里有显示
+kubectl create configmap spring-file-config --from-file=spring_conf=/opt/k8s/config/application.yaml
+# configmap/spring-file-config created
+
+# 其实也可以省略取名这个步骤，直接指定文件即可，无需取名
+kubectl create configmap spring-file-config --from-file=/opt/k8s/config/application.yaml
+
+kubectl get cm
+# NAME                 DATA   AGE
+# kube-root-ca.crt     1      4d21h
+# spring-file-config   1      6s
+# test-dir-config      2      11m
+
+kubectl describe cm spring-file-config
+# Name:         spring-file-config
+# Namespace:    default
+# Labels:       <none>
+# Annotations:  <none>
+# 
+# Data
+# ====
+# spring_conf:  # 注意这里的文件名并不是application.yaml,而是spring_conf
+# ----
+# spring:
+#     datasource:
+#         password: password
+#         url: jdbc:h2:dev
+#         username: SA
+# 
+# 
+# BinaryData
+# ====
+# 
+# Events:  <none>
+
+# 不指定配置文件路径，直接在命令里编写配置文件的内容,注意这个配置内容是没有顺序的
+# 并非username就一定在前面，而password就一定在后面
+kubectl create configmap my-literal-config --from-literal=username=root --from-literal=password=123456
+
+k describe cm my-literal-config
+# Name:         my-literal-config
+# Namespace:    default
+# Labels:       <none>
+# Annotations:  <none>
+# 
+# Data
+# ====
+# password:
+# ----
+# 123456
+# username:
+# ----
+# root
+# 
+# BinaryData
+# ====
+# 
+# Events:  <none>
+```
+
+#### 使用
+
+> 以下是`test-env-po.yaml`文件，我们会使用它创建一个测试pod
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-env-po
+spec:
+  restartPolicy: Never
+  containers:
+    - name: env-test
+      image: alpine
+      command: [ "/bin/sh", "-c", "env;sleep 3600" ]
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: JAVA_VM_TEST # 自定义的名字
+        valueFrom:
+          configMapKeyRef:
+            name: test-env-config # configmap的名字
+            key: JAVA_OPTS_TEST   # 获取configmap中的key，将其赋值给把本地的环境变量JAVA_VM_TEST
+      - name: APP
+        valueFrom:
+          configMapKeyRef:
+            name: test-env-config
+            key: APP_NAME
+```
+
+```sh
+kubectl create configmap test-env-config --from-literal=JAVA_OPTS_TEST='-Xms512m -Xmx512m' --from-literal=APP_NAME=spring-boot-test
+configmap/test-env-config created
+
+kubectl describe cm test-env-config
+# Name:         test-env-config
+# Namespace:    default
+# Labels:       <none>
+# Annotations:  <none>
+
+# Data
+# ====
+# APP_NAME:
+# ----
+# spring-boot-test
+# JAVA_OPTS_TEST:
+# ----
+# -Xms512m -Xmx512m
+# BinaryData
+# ====
+# Events:  <none>
+```
+
+**在容器中使用配置**
+
+```sh
+# 我希望将这里的配置加载到容器中打印出来，如何实现？
+vim test-env-po.yaml
+
+kubectl create -f test-env-po.yaml 
+# pod/test-env-po created
+
+kubectl get po -A
+# NAMESPACE       NAME                             READY   STATUS    RESTARTS       AGE
+# default         dns-test                         1/1     Running   79 (17m ago)   3d6h
+# default         nginx-deploy-56696fbb5-5zs4d     1/1     Running   0              3h58m
+# default         test-env-po                      1/1     Running   0              6s
+# ingress-nginx   ingress-nginx-controller-rlg4t   1/1     Running   0              4h13m
+# kube-flannel    kube-flannel-ds-74n5v            1/1     Running   2              4d21h
+# kube-system     etcd-tongwh                      1/1     Running   17             4d21h
+# kube-system     kube-apiserver-tongwh            1/1     Running   19             4d21h
+# kube-system     kube-controller-manager-tongwh   1/1     Running   7              4d21h
+# kube-system     kube-proxy-k4lrx                 1/1     Running   2              4d21h
+# kube-system     kube-scheduler-tongwh            1/1     Running   7              4d21h
+
+# 查看日志
+kubectl logs -f test-env-po
+# KUBERNETES_SERVICE_PORT=443
+# KUBERNETES_PORT=tcp://10.96.0.1:443
+# NGINX_SVC_SERVICE_HOST=10.97.90.141
+# JAVA_VM_TEST=-Xms512m -Xmx512m # ConfigMap里的JAVA_OPTS_TEST配置
+# HOSTNAME=test-env-po
+# SHLVL=1
+# HOME=/root
+# NGINX_SVC_SERVICE_PORT=80
+# NGINX_SVC_PORT=tcp://10.97.90.141:80
+# NGINX_SVC_SERVICE_PORT_WEB=80
+# NGINX_SVC_PORT_80_TCP_ADDR=10.97.90.141
+# APP=spring-boot-test           # ConfigMap里的APP_NAME配置
+# NGINX_SVC_PORT_80_TCP_PORT=80
+# NGINX_SVC_PORT_80_TCP_PROTO=tcp
+# KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+# PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# KUBERNETES_PORT_443_TCP_PORT=443
+# KUBERNETES_PORT_443_TCP_PROTO=tcp
+# NGINX_SVC_PORT_80_TCP=tcp://10.97.90.141:80
+# KUBERNETES_SERVICE_PORT_HTTPS=443
+# KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+# KUBERNETES_SERVICE_HOST=10.96.0.1
+# PWD=/
+```
+
+**将配置映射到容器中，类似volume**
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-configfile-po
+spec:
+  restartPolicy: Never
+  containers:
+    - name: env-test
+      image: alpine
+      command: [ "/bin/sh", "-c", "env;sleep 3600" ]
+      imagePullPolicy: IfNotPresent
+      volumeMounts: # 加载配置的数据卷
+        - name: db-config # 加载volumes下的指定数据卷
+          mountPath: "/etc/db-config"
+          readOnly: true # 配置文件是否只读,默认false
+  volumes:
+    - name: db-config # 数据卷的名字，自定义设置
+      configMap:
+        name: test-dir-config # configmap的名字，必须和configmap相同
+        items: # 配置项，如果不指定，默认会将configmap中的所有key都映射到容器中的同名文件
+          - key: "db.properties" # configmap中的key
+            path: "config.properties" # 映射到pod中的文件名
+```
+
+```sh
+vim test-configfile-po.yaml
+kubectl create -f test-configfile-po.yaml
+# pod/test-configfile-po created
+
+kubectl get po
+# NAME                           READY   STATUS    RESTARTS       AGE
+# dns-test                       1/1     Running   79 (33m ago)   3d6h
+# nginx-deploy-56696fbb5-5zs4d   1/1     Running   0              4h14m
+# test-configfile-po             1/1     Running   0              14s
+# test-env-po                    1/1     Running   0              15m
+
+kubectl exec -it test-configfile-po -- sh
+
+ls /etc/
+# alpine-release   crontabs         group            inittab          modprobe.d       motd             nsswitch.conf    passwd           profile.d        secfixes.d       shadow           ssl1.1           udhcpc
+# apk              db-config        hostname         issue            modules          mtab             opt              periodic         protocols        securetty        shells           sysctl.conf
+# busybox-paths.d  fstab            hosts            logrotate.d      modules-load.d   network          os-release       profile          resolv.conf      services         ssl              sysctl.d
+
+ls /etc/db-config/
+# config.properties
+
+cat /etc/db-config/config.properties 
+# username=root
+# password=123456
+```
+
+### 加密数据配置Secret
+
+与 ConfigMap 类似，用于存储配置信息，但是主要用于存储敏感信息、需要加密的信息，Secret 可以提供数据加密、解密功能。
+
+在创建 Secret 时，要注意如果要加密的字符中，包含了有特殊字符，需要使用转义符转移，例如 $ 转移后为 \$，也可以对特殊字符使用单引号描述，这样就不需要转移例如 `1$289*-!` 转换为 `'1$289*-!'`
+
+
+
+### SubPath的使用
+
+
+
+### 配置的热更新
+
+
+
+### 不可变的Secret和ConfigMap

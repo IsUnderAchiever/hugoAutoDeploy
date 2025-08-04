@@ -1,8 +1,8 @@
 ---
-title: Elasticsearch基础
+title: Elasticsearch基础文档操作
 description: Elasticsearch基础文档操作
 date: 2023-02-25
-slug: Git
+slug: Elasticsearch
 image: 202412212115512.png
 categories:
     - Elasticsearch
@@ -10,8 +10,8 @@ categories:
 
 ## Elasticsearch基础
 #### 环境配置
-<img src="https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo01/202302242225995.png" alt="image-20230224222550808" style="zoom:80%;" />
 ![image-20230224221154537](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo01/202302242212916.png)
+
 ### 创建、查询、删除、修改 索引库
 ```cmd
 # Click the Variables button, above, to create your own variables.
@@ -80,7 +80,6 @@ PUT /user/_mapping
 }
 ```
 ### 文档的CRUD操作
-<img src="https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo01/202302242234225.png" alt="image-20230224223438156" style="zoom:80%;" />
 ```cmd
 # 插入文档
 POST /user/_doc/1

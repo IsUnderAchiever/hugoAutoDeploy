@@ -5,7 +5,7 @@ date: 2024-12-24
 slug: Kubernetes_1
 image: 202412242125601.png
 categories:
-  - Kubernetes_1
+  - Kubernetes
 ---
 
 # Kubernetes_1
