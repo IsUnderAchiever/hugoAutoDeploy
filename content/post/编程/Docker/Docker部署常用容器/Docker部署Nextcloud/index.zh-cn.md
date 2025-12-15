@@ -46,3 +46,7 @@ networks:
   nextcloud-net:
     driver: bridge
 ```
+
+访问[127.0.0.1:51117](http://127.0.0.1:51117)
+
+![image-20251215230142299](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo06/image-20251215230142299.png)

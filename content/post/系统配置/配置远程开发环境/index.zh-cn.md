@@ -47,6 +47,16 @@ docker run -d \
   gitlab/gitlab-runner:latest
 ```
 
+![image-20251215225343474](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo06/image-20251215225343474.png)
+
+![image-20251215225551627](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo06/image-20251215225551627.png)
+
+![image-20251215225617911](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo06/image-20251215225617911.png)
+
+![image-20251215225632442](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo06/image-20251215225632442.png)
+
+
+
 
 > 点击设置、CI/CD,选择Runner，点击`创建项目Runner`，标签随便写一个即可，这里我写的是`shared`
 
@@ -65,13 +75,16 @@ docker exec -it gitlab-runner gitlab-runner register \
   --docker-image "alpine:latest"
 ```
 
-
 此时重新查看CICD设置，可以看到流水线已经注册成功了
+
+![image-20251215225652128](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo06/image-20251215225652128.png)
 
 > 注意这里有个坑，如果流水线注册之后，看到代码运行流水线失败，此时你可能会删除掉流水线重新注册。
 > 你应该重新提交代码运行新的流水线，而不是重新运行旧的流水线，否则仍然会运行旧的流水线导致报错。
 
 在项目根目录下创建`.gitlab-ci.yml`文件
+
+![image-20251215225717480](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo06/image-20251215225717480.png)
 
 ```yaml
 test-job:
@@ -86,4 +99,17 @@ test-job:
 > 这里15是jobid，根据自己实际情况来
 
 访问`http://10.0.0.7:8080/tongwh/bilibili-download/-/jobs/15`
+
+![image-20251215225743041](https://raw.githubusercontent.com/IsUnderAchiever/markdown-img/master/PicGo06/image-20251215225743041.png)
+
+## 外网访问
+
+这里我是使用`ddns`+`动态公网ip`+`域名`实现的远程访问方案
+
+动态公网ip可以找运营商申请
+ddns项目我推介使用`ddns-go`，可使用docker部署
+
+```bash
+docker run -d --name ddns-go --restart=always --net=host -v /data/volumes/ddns-go:/root jeessy/ddns-go
+```
 
